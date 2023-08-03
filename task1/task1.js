@@ -13,7 +13,7 @@ function validateBase(value){
    return validate(value) && value >= 2 && value <= 36;
 }
 
-function main() {
+function valToBase() {
    const 
       value1 = prompt(VALUE_1),
       value2 = prompt(VALUE_2);
@@ -27,7 +27,7 @@ function main() {
 
 // 2.
 
-function main2() {
+function valToSum() {
    const 
       value1 = prompt(VALUE_1),
       value2 = prompt(VALUE_2);
