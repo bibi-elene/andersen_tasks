@@ -6,7 +6,7 @@ const
    VALUE_2 = 'Значение 2';
 
 function validate(value) {
-   return !isNaN((value)) && value.trim() !== '';
+   return value || value === 0 && !isNaN((value));
 }
 
 function validateBase(value){
