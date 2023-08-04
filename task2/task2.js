@@ -14,11 +14,12 @@ function makeObjectDeepCopy(obj){
 }
 
 function selectFromInterval(arr = [], from, to) {
-    if (!Array.isArray(arr) || arr.some((value) => isNaN(value))) {
+    
+    if (!Array.isArray(arr) || !arr.every((value) => typeof value === 'number')) {
         throw new Error('Ошибка!');
       }
     
-    if (isNaN(from) || isNaN(to)) {
+    if (typeof from !== 'number' || typeof to !== 'number' || isNaN(from) || isNaN(to)) {
         throw new Error('Ошибка!');
     }
 
