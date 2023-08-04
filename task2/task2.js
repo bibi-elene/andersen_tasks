@@ -1,5 +1,3 @@
-// 1.
-
 function makeObjectDeepCopy(obj){
     
     const copy = Array.isArray(obj) ? [] : {};
@@ -9,25 +7,19 @@ function makeObjectDeepCopy(obj){
         } 
 
         Object.keys(obj).forEach((key) => {
-            copy[key] = makeObjectDeepCopy(obj[key])
+            copy[key] = makeObjectDeepCopy(obj[key]);
         })
 
     return copy;
 }
 
-const obj1 = {name: "elene", surname: "bibilashvili", age: "23"}
-
-makeObjectDeepCopy(obj1)
-
-// 2.
-
 function selectFromInterval(arr = [], from, to) {
-    if (!Array.isArray(arr) || !arr.every((value) => typeof value === 'number')) {
-        throw new Error('Invalid input array. Array must contain only numbers.');
+    if (!Array.isArray(arr) || arr.some((value) => isNaN(value))) {
+        throw new Error('Ошибка!');
       }
     
-    if (typeof from !== 'number' || typeof to !== 'number' || isNaN(from) || isNaN(to)) {
-        throw new Error('Invalid interval values. Both values must be valid numbers.');
+    if (isNaN(from) || isNaN(to)) {
+        throw new Error('Ошибка!');
     }
 
     const sortedArr = [from, to].sort((a, b) => a - b);
@@ -37,20 +29,16 @@ function selectFromInterval(arr = [], from, to) {
 
 }
 
-selectFromInterval([1,2,3], -13, -5);
-
-// 3.
-
 const myIterable = { 
     from: 1, 
     to: 10,
     [Symbol.iterator] () {
-        if (typeof this.from !== 'number' || typeof this.to !== 'number' || isNaN(this.from) || isNaN(this.to)) {
-            throw new Error('Invalid from/to values. Both must be valid numbers.');
+        if (isNaN(this.from) || isNaN(this.to)) {
+            throw new Error('Ошибка!');
           }
       
         if (this.to < this.from) {
-        throw new Error('Invalid range. "to" value must be greater than "from" value.');
+            throw new Error('Ошибка!');
         }
 
         let res = this.from;
@@ -65,7 +53,3 @@ const myIterable = {
         }
     }};
 
-    
-    for (let item of myIterable) {
-        console.log(item); 
-    }
