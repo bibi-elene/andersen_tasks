@@ -29,17 +29,18 @@ function selectFromInterval(arr = [], from, to) {
 
 }
 
-const myIterable = { 
-    from: 1, 
+let myIterable = { 
+    from: 5, 
     to: 10,
     [Symbol.iterator] () {
-        if (isNaN(this.from) || isNaN(this.to)) {
+        
+        if (isNaN(this.from) || isNaN(this.to) ||            
+            typeof this.from !== 'number' ||           
+            typeof this.to !== 'number' ||   
+            this.from > this.to
+        ) {
             throw new Error('Ошибка!');
           }
-      
-        if (this.to < this.from) {
-            throw new Error('Ошибка!');
-        }
 
         let res = this.from;
         return {
