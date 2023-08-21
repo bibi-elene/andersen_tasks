@@ -4,9 +4,10 @@ Array.prototype.myFilter = function myFilter(callback, context) {
     }
 
     const filtered = [];
+    let callbackResult = callback.call(context, this[i], i, this)
 
     for (let i = 0; i < this.length; i++) {
-        if (callback.call(context, this[i], i, this)) {
+        if (callbackResult) {
             filtered.push(this[i]);
         } 
     }
@@ -25,3 +26,4 @@ function createDebounceFunction(callback, delay) {
         }, delay);
     }
 };
+
