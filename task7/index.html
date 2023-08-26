@@ -16,7 +16,7 @@
         }
 
         .calculator {
-            width: auto;
+            width: 500px;
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             background-color: #1f2026;
@@ -24,7 +24,7 @@
             display: grid;
             grid-template-columns: repeat(6, 1fr);
             grid-gap: 10px;
-            min-height: 100%;
+            min-height: 550px;
         }
 
         .display {
@@ -86,7 +86,7 @@
         .main.value {
             width: 100%;
             border-bottom: 1px solid grey;
-            font-size: 2.5em;
+            font-size: 10vw;
         }
     </style>
 </head>
@@ -95,7 +95,7 @@
         <div class="display">
             <p class="top value">value top</p>
             <p class="top value value2">val</p>
-            <span class="main value">0</span>
+            <span class="output main value">0</span>
             <p class="bottom value">value bottom</p>
         </div>
         <button value="MC" class="btn operator">MC</button>
@@ -127,5 +127,7 @@
         <button value="00" class="btn">00</button>
         <button value="." class="btn">.</button>
     </div>
+
+    <script src="calculator.js"></script>
 </body>
 </html>
