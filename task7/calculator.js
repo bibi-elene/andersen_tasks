@@ -19,26 +19,36 @@ function eventHandler() {
     const updatedContent = parseFloat(output.innerHTML) === 0 ? this.innerHTML : currentContent + this.innerHTML;
 
     switch(this.value) {
-        case '+':
-        case '-':
-        case '*':
-        case '/':
-            if (currentOperation === null) {
-                currentOperation = this.value;
-                prevValue = currentContent;
-                count++;
-                output.innerHTML = prevValue + this.innerHTML;
-                operationSequence = prevValue + this.innerHTML;
-            } else {
-                nextValue = currentContent;
-                const result = operate(parseFloat(prevValue), parseFloat(nextValue), currentOperation);
-                prevValue = result.toString();
-                nextValue = '';
-                count++;
-                output.innerHTML = result + this.innerHTML;
-                operationSequence = prevValue + this.innerHTML;
-            }
-            break;
+       // ... (previous code)
+
+case '+':
+    case '-':
+    case '*':
+    case '/':
+        if (currentOperation === null) {
+            currentOperation = this.value;
+            prevValue = currentContent;
+            count++;
+            output.innerHTML = prevValue + this.innerHTML;
+            operationSequence = prevValue + this.innerHTML;
+        } else if (nextValue !== '') {
+            const result = operate(parseFloat(prevValue), parseFloat(nextValue), currentOperation);
+            prevValue = result.toString();
+            nextValue = '';
+            currentOperation = this.value;
+            output.innerHTML = prevValue + this.innerHTML;
+            operationDisplay.innerHTML = prevValue + this.innerHTML;
+            operationSequence = prevValue + this.innerHTML;
+        } else {
+            currentOperation = this.value;
+            output.innerHTML = prevValue + this.innerHTML;
+            operationDisplay.innerHTML = prevValue + this.innerHTML;
+            operationSequence = prevValue + this.innerHTML;
+        }
+        break;
+    
+    // ... (rest of the code)
+    
 
         case '%':
             if (currentOperation === null) {
@@ -71,17 +81,26 @@ function eventHandler() {
             }
             break;
 
-        case 'num':
-            if (currentOperation === null) {
-                prevValue += this.innerHTML;
-                output.innerHTML = prevValue;
-                operationSequence += this.innerHTML;
-            } else {
-                nextValue += this.innerHTML;
-                output.innerHTML = nextValue;
-                operationSequence += this.innerHTML;
-            }
-            break;
+       // ... (previous code)
+
+case 'num':
+    if (currentOperation === null) {
+        prevValue += this.innerHTML;
+        output.innerHTML = prevValue;
+        operationSequence += this.innerHTML;
+    } else {
+        if (nextValue === '') {
+            nextValue = this.innerHTML;
+        } else {
+            nextValue += this.innerHTML;
+        }
+        output.innerHTML = nextValue;
+        operationSequence += this.innerHTML;
+    }
+    break;
+
+// ... (rest of the code)
+
 
         default:
             if (output.innerHTML.length > 24) {
