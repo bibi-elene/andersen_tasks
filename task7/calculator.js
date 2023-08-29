@@ -77,12 +77,12 @@ function eventHandler() {
         case '→':
             if (output.innerHTML.length > 1) {
                 output.innerHTML = currentContent.slice(0, -1);
-                updateOperationSequence();
             } else {
                 prevValue = '';
                 nextValue = '';
                 currentOperation = null;
                 output.innerHTML = 0;
+                adjustFontSize();
                 operationDisplay.innerHTML = '';
                 operationSequence = '';
             }
@@ -90,39 +90,35 @@ function eventHandler() {
                   
         case 'num':
             if (currentOperation === null || currentOperation === "=") {
-                if (prevValue === '' && this.innerHTML === '.') {
-                    prevValue = '0.';
-                    output.innerHTML = prevValue;
-                    console.log(prevValue)
+                if (prevValue === '' || prevValue === '0') {
+                    if (this.innerHTML === '.') {
+                        prevValue = '0.';
+                    } else {
+                        prevValue = this.innerHTML;
+                    }
+                } else if (currentOperation === "=") { 
+                    prevValue = this.innerHTML;  
+                    currentOperation = null;
+                } else if (this.innerHTML === '.' && prevValue.includes('.')) {
+                    break;
                 } else {
                     prevValue += this.innerHTML;
                 }
                 output.innerHTML = prevValue;
+                adjustFontSize();
                 operationSequence += this.innerHTML;
             } else {
-                if (nextValue === '' && this.innerHTML === '.') {
-                    nextValue = '0.';
+                if (this.innerHTML === '.' && nextValue.includes('.')) {
+                    break;
                 } else {
                     nextValue += this.innerHTML;
                 }
                 output.innerHTML = nextValue;
+                adjustFontSize();
                 operationSequence += this.innerHTML;
             }
-            adjustFontSize();
             break;
-            
-        case '00': {
-            output.innerHTML = parseFloat(currentContent) * 100;
-            if (currentOperation === null) {
-                prevValue = parseFloat(output.innerHTML);
-                operationSequence = prevValue.toString();
-            } else {
-                nextValue = parseFloat(output.innerHTML);
-                operationSequence = prevValue + currentOperation + nextValue;
-            }
-            break;
-        }
-        
+ 
         case 'M+':
             memory += parseFloat(currentContent);
             memoryHolder.innerHTML = 'M1: ' + memory; 
@@ -198,41 +194,32 @@ function eventHandler() {
 }
 
 function operate(a, b, operator) {
+    let result;
     switch (operator) {
         case '+':
-            return a + b;
+            result = a + b;
+            break;
         case '-':
-            return a - b;
+            result = a - b;
+            break;
         case '*':
-            return a * b;
+            result = a * b;
+            break;
         case '/':
             if (b === 0) {
-                console.log('can not divide by 0')
+                console.log('Cannot divide by 0');
                 return 0;
             }
-
-            return a / b;
-        default:
+            result = a / b;
             break;
+        default:
+            return NaN; // 
     }
+    return parseFloat(result.toFixed(8));
 }
 
-function adjustFontSize() {
-    let content = parseFloat(output.textContent);
-    
-    if (Math.abs(content) >= 1e9) {
-        output.innerHTML = content.toExponential(8);
-    } else {
-        content = content.toFixed(8);
-        while (content.charAt(content.length - 1) === '0' && content.indexOf('.') !== -1) {
-            content = content.slice(0, -1);
-        }
-        if (content.charAt(content.length - 1) === '.') {
-            content = content.slice(0, -1);
-        }
-        output.innerHTML = content;
-    }
 
+function adjustFontSize() {
     const contentLength = output.textContent.length;
 
     if (contentLength > 6) {
