@@ -19,7 +19,6 @@ function eventHandler() {
     const currentContent = output.innerHTML;
     const updatedContent = parseFloat(output.innerHTML) === 0 ? this.innerHTML : currentContent + this.innerHTML;
     switch(this.value) {
-
         case '+':
         case '-':
         case '*':
@@ -93,6 +92,8 @@ function eventHandler() {
             if (currentOperation === null || currentOperation === "=") {
                 if (prevValue === '' && this.innerHTML === '.') {
                     prevValue = '0.';
+                    output.innerHTML = prevValue;
+                    console.log(prevValue)
                 } else {
                     prevValue += this.innerHTML;
                 }
@@ -165,7 +166,6 @@ function eventHandler() {
             }
             break;
 
-        //need to handle
         case 'C':
             prevValue = '';
             nextValue = '';
@@ -194,7 +194,7 @@ function eventHandler() {
             output.innerHTML = updatedContent;
             adjustFontSize();
     }
-    operationDisplay.innerHTML = operationSequence;
+        operationDisplay.innerHTML = operationSequence;
 }
 
 function operate(a, b, operator) {
