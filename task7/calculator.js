@@ -18,7 +18,6 @@ buttons.forEach(x => x.addEventListener("click", eventHandler));
 function eventHandler() {
     const currentContent = output.innerHTML;
     const updatedContent = parseFloat(output.innerHTML) === 0 ? this.innerHTML : currentContent + this.innerHTML;
-
     switch(this.value) {
 
         case '+':
@@ -47,13 +46,13 @@ function eventHandler() {
             break;  
         
         case '%':
-            if (currentOperation !== '=') {
-                output.innerHTML = parseFloat(prevValue * nextValue / 100);
-                nextValue = parseFloat(prevValue * nextValue / 100);
-                operationSequence = prevValue + currentOperation + nextValue;
-            }
-        break;    
-
+            if (currentOperation !== '=' && currentOperation !== null && !isOperator(operationSequence.charAt(operationSequence.length - 1))) {
+                    output.innerHTML = parseFloat(prevValue * nextValue / 100);
+                    nextValue = parseFloat(prevValue * nextValue / 100);
+                    operationSequence = prevValue + currentOperation + nextValue;  
+            } 
+            break;
+            
         case '+/-':
             output.innerHTML = parseFloat(currentContent) * -1;
             if (currentOperation === null) {
@@ -92,20 +91,25 @@ function eventHandler() {
                   
         case 'num':
             if (currentOperation === null || currentOperation === "=") {
-                prevValue += this.innerHTML;
+                if (prevValue === '' && this.innerHTML === '.') {
+                    prevValue = '0.';
+                } else {
+                    prevValue += this.innerHTML;
+                }
                 output.innerHTML = prevValue;
                 operationSequence += this.innerHTML;
             } else {
-                if (nextValue === '') {
-                    nextValue = this.innerHTML;
+                if (nextValue === '' && this.innerHTML === '.') {
+                    nextValue = '0.';
                 } else {
                     nextValue += this.innerHTML;
                 }
                 output.innerHTML = nextValue;
                 operationSequence += this.innerHTML;
             }
+            adjustFontSize();
             break;
-
+            
         case '00': {
             output.innerHTML = parseFloat(currentContent) * 100;
             if (currentOperation === null) {
@@ -149,7 +153,7 @@ function eventHandler() {
             break;
 
         case '=':
-            if (currentOperation !== null) {
+            if (currentOperation !== null && currentOperation !== '=') {
                 nextValue = currentContent;
                 const result = operate(parseFloat(prevValue), parseFloat(nextValue), currentOperation);
                 prevValue = result.toString();
@@ -169,6 +173,7 @@ function eventHandler() {
             output.innerHTML = 0;
             operationDisplay.innerHTML = '';
             operationSequence = '';
+            adjustFontSize();
             break;
     
         case 'AC':
@@ -179,6 +184,7 @@ function eventHandler() {
             operationDisplay.innerHTML = '';
             operationSequence = '';
             memory = 0;
+            adjustFontSize();
             break;
 
         default:
@@ -200,17 +206,33 @@ function operate(a, b, operator) {
         case '*':
             return a * b;
         case '/':
+            if (b === 0) {
+                console.log('can not divide by 0')
+                return 0;
+            }
+
             return a / b;
         default:
-            return NaN;
+            break;
     }
 }
 
-function toOpposite(a){
-    return a * -1;
-}
-
 function adjustFontSize() {
+    let content = parseFloat(output.textContent);
+    
+    if (Math.abs(content) >= 1e9) {
+        output.innerHTML = content.toExponential(8);
+    } else {
+        content = content.toFixed(8);
+        while (content.charAt(content.length - 1) === '0' && content.indexOf('.') !== -1) {
+            content = content.slice(0, -1);
+        }
+        if (content.charAt(content.length - 1) === '.') {
+            content = content.slice(0, -1);
+        }
+        output.innerHTML = content;
+    }
+
     const contentLength = output.textContent.length;
 
     if (contentLength > 6) {
@@ -218,4 +240,8 @@ function adjustFontSize() {
     } else {
         output.style.fontSize = '10vw';
     }
+}
+
+function isOperator(char) {
+    return ['+', '-', '*', '/', '%'].includes(char);
 }
