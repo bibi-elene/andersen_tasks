@@ -83,6 +83,10 @@
             float: right;
         }
 
+        .long {
+            grid-column: span 2;
+        }
+
         .main.value {
             width: 100%;
             border-bottom: 1px solid grey;
@@ -94,7 +98,9 @@
     <div class="calculator">
         <div class="display">
             <p style="border: 1px solid white; padding: 6px 40px" class="memory top value">M1</p>
-            <a style="font-size: 18px; color: skyblue" class="top value value2">⎙</a>
+            <button id="copyBtn" value="copy" style="border: none; padding: 0; margin: 0; background-color: transparent; color: skyblue; font-size: 20px;">
+                ⎙
+            </button>
             <span class="output main value">0</span>
             <p class="operation-display bottom value">0</p>
         </div>
@@ -102,30 +108,28 @@
         <button value="MR" class="btn operator">MR</button>
         <button value="M-" class="btn operator">M-</button>
         <button value="M+" class="btn operator">M+</button>
+        <button value="%" class="btn operator">%</button>
         <button value="√" class="btn operator">√</button>
-        <button style="opacity: 0.2; z-index: 0;">MU</button>
         <button value="+/-" class="btn operator">+/-</button>
         <button value="num" class="btn">7</button>
         <button value="num" class="btn">8</button>
         <button value="num" class="btn">9</button>
         <button value="/" class="btn operator">/</button>
-        <button value="%" class="btn operator">%</button>
-        <button value="→" class="btn operator">→</button>
+        <button value="*" class="btn operator">*</button>
+        <button value="AC" class="btn clear">AC</button>
         <button value="num" class="btn">4</button>
         <button value="num" class="btn">5</button>
         <button value="num" class="btn">6</button>
-        <button value="*" class="btn operator">*</button>
         <button value="-" class="btn operator">-</button>
-        <button value="AC" class="btn clear">AC</button>
+        <button value="→" class="btn operator">→</button>
+        <button value="C" class="btn tall clear">C</button>
         <button value="num" class="btn">1</button>
         <button value="num" class="btn">2</button>
         <button value="num" class="btn">3</button>
         <button value="+" class="btn tall addition">+</button>
         <button value="=" class="btn tall">=</button>
-        <button value="C" class="btn clear">C</button>
-        <button value="num" class="btn">0</button>
+        <button value="num" class="btn long">0</button>
         <button value="num" class="btn">.</button>
-        <button style="opacity: 0.2;">00</button>
     </div>
 
     <script src="calculator.js"></script>

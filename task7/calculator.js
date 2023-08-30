@@ -15,9 +15,32 @@ let memory = 0;
 
 buttons.forEach(x => x.addEventListener("click", eventHandler));
 
+// Copy the value 
+document.getElementById("copyBtn").addEventListener("click", function () {
+    const outputText = output.innerHTML;
+    const tempTextarea = document.createElement("textarea");
+    tempTextarea.value = outputText;
+    document.body.appendChild(tempTextarea);
+    tempTextarea.select();
+    document.execCommand("copy");
+    document.body.removeChild(tempTextarea);
+});
+
 function eventHandler() {
     const currentContent = output.innerHTML;
     const updatedContent = parseFloat(output.innerHTML) === 0 ? this.innerHTML : currentContent + this.innerHTML;
+    const isNumberInput = this.value === 'num' && !isOperator(currentContent.charAt(currentContent.length - 1));
+    const decimalPartLength = currentContent.split('.')[1]?.length || 0;
+    const totalLength = currentContent.replace('.', '').length;
+
+    if (isNumberInput && currentContent.includes('.') && decimalPartLength >= 8) {
+        return;
+    }
+
+    if (isNumberInput && !currentContent.includes('.') && totalLength >= 12) {
+        return;
+    }
+
     switch(this.value) {
         case '+':
         case '-':
@@ -28,7 +51,9 @@ function eventHandler() {
                 prevValue = currentContent;
                 output.innerHTML = prevValue + this.innerHTML;
                 operationSequence = prevValue + this.innerHTML;
-            } else if (nextValue !== '') {
+            } 
+            
+            else if (nextValue !== '') {
                 const result = operate(parseFloat(prevValue), parseFloat(nextValue), currentOperation);
                 prevValue = result.toString();
                 nextValue = '';
@@ -36,58 +61,89 @@ function eventHandler() {
                 output.innerHTML = prevValue + this.innerHTML;
                 operationDisplay.innerHTML = prevValue + this.innerHTML;
                 operationSequence = prevValue + this.innerHTML;
-            } else {
+            } 
+            
+            else {
                 currentOperation = this.value;
                 output.innerHTML = prevValue + this.innerHTML;
                 operationDisplay.innerHTML = prevValue + this.innerHTML;
                 operationSequence = prevValue + this.innerHTML;
             }
+            
             break;  
         
         case '%':
-            if (currentOperation !== '=' && currentOperation !== null && !isOperator(operationSequence.charAt(operationSequence.length - 1))) {
+            const isValid = currentOperation !== '=' && currentOperation !== null && !isOperator(operationSequence.charAt(operationSequence.length - 1));
+
+            if (isValid) {
                     output.innerHTML = parseFloat(prevValue * nextValue / 100);
                     nextValue = parseFloat(prevValue * nextValue / 100);
                     operationSequence = prevValue + currentOperation + nextValue;  
             } 
+
             break;
             
         case '+/-':
             output.innerHTML = parseFloat(currentContent) * -1;
+
             if (currentOperation === null) {
                 prevValue = parseFloat(output.innerHTML);
                 operationSequence = prevValue.toString();
-            } else {
+            } 
+            
+            else {
                 nextValue = parseFloat(output.innerHTML);
                 operationSequence = prevValue + currentOperation + nextValue;
             }
+
             break;
 
         case '√':
-            output.innerHTML = Math.sqrt(parseFloat(currentContent));
-            if (currentOperation === null) {
-                prevValue = parseFloat(output.innerHTML);
-                operationSequence = prevValue.toString();
-            } else {
-                nextValue = parseFloat(output.innerHTML);
-                operationSequence = prevValue + currentOperation + nextValue;
-            }
+            output.innerHTML = roundDown(Math.sqrt(parseFloat(currentContent)));
+            prevValue = roundDown(parseFloat(output.innerHTML));
+            operationSequence = (this.innerHTML + prevValue).toString();
+
             break;
 
-        case '→':
-            if (output.innerHTML.length > 1) {
-                output.innerHTML = currentContent.slice(0, -1);
-            } else {
-                prevValue = '';
-                nextValue = '';
-                currentOperation = null;
-                output.innerHTML = 0;
-                adjustFontSize();
-                operationDisplay.innerHTML = '';
-                operationSequence = '';
-            }
-            break;
-                  
+            case '→':
+                if (output.innerHTML.length > 1) {
+                    output.innerHTML = currentContent.slice(0, -1);
+                    operationSequence = operationSequence.slice(0, -1);
+                    if (nextValue.length > 0) {
+                        nextValue = nextValue.slice(0, -1);
+                    } else if (prevValue.length > 0) {
+                        prevValue = prevValue.slice(0, -1);
+                    }
+                } else if (output.innerHTML.length < 2 && operationSequence.length < 2) {
+                    prevValue = '';
+                    nextValue = '';
+                    currentOperation = null;
+                    output.innerHTML = '0';
+                    operationDisplay.innerHTML = '';
+                    operationSequence = '';
+                    adjustFontSize();
+                } else {
+                    if (nextValue.length > 0) {
+                        nextValue = nextValue.slice(0, -1);
+                        operationSequence = operationSequence.slice(0, -1);
+                    } else if (currentOperation && nextValue === '') {
+                        currentOperation = null;
+                        operationSequence = operationSequence.slice(0, -1);
+                        prevValue = operationSequence;
+                    } else if (currentOperation) {
+                        currentOperation = null;
+                        operationSequence = operationSequence.slice(0, -1);
+                    } else if (prevValue.length > 0) {
+                        prevValue = prevValue.slice(0, -1);
+                        operationSequence = operationSequence.slice(0, -1);
+                    }
+            
+                    adjustFontSize();
+                    output.innerHTML = operationSequence;
+                }
+                break;
+            
+            
         case 'num':
             if (currentOperation === null || currentOperation === "=") {
                 if (prevValue === '' || prevValue === '0') {
@@ -190,7 +246,11 @@ function eventHandler() {
             output.innerHTML = updatedContent;
             adjustFontSize();
     }
-        operationDisplay.innerHTML = operationSequence;
+    operationDisplay.innerHTML = operationSequence;
+}
+
+function roundDown(num){
+    return num.toFixed(8).replace(/\.?0+$/, '');
 }
 
 function operate(a, b, operator) {
@@ -207,13 +267,12 @@ function operate(a, b, operator) {
             break;
         case '/':
             if (b === 0) {
-                console.log('Cannot divide by 0');
                 return 0;
             }
             result = a / b;
             break;
         default:
-            return NaN; // 
+            return NaN; 
     }
     return parseFloat(result.toFixed(8));
 }
